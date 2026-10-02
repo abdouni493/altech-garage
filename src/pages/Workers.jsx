@@ -10,6 +10,7 @@ import { NAV } from "../components/Layout";
 import {
   Btn, IconBtn, Modal, Confirm, Field, Input, Textarea, Select, SearchBox,
   Empty, PageHeader, CardGrid, itemRise, Badge, InfoRow, MoneyLine, Steps,
+  StepPane,
 } from "../components/ui";
 
 const ACTION_LABELS = {
@@ -20,14 +21,19 @@ const ACTION_LABELS = {
 };
 
 // ===== Create / edit worker wizard =====
+const LAST_STEP = 2;
+
 function WorkerWizard({ editing, onClose }) {
   const { db, update, t } = useApp();
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState(editing || {
+  const [err, setErr] = useState("");
+  // Workers stored before `pay`/`account` existed must not blow up the form
+  const [form, setForm] = useState(() => ({
     fullName: "", birthday: "", idCard: "", phone: "", roleId: "", startDate: todayISO(),
-    pay: { enabled: false, mode: "month", amount: "", percent: 10 },
-    account: { enabled: false, email: "", username: "", password: "" },
-  });
+    ...(editing || {}),
+    pay: { enabled: false, mode: "month", amount: "", percent: 10, ...(editing?.pay || {}) },
+    account: { enabled: false, email: "", username: "", password: "", ...(editing?.account || {}) },
+  }));
   const [newRole, setNewRole] = useState(null);
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const setPay = (k, v) => setForm((f) => ({ ...f, pay: { ...f.pay, [k]: v } }));
@@ -41,16 +47,38 @@ function WorkerWizard({ editing, onClose }) {
     setNewRole(null);
   };
 
+  const validate = (s) => {
+    setErr("");
+    if (s === 0 && !form.fullName.trim()) { setErr(t("Le nom complet est obligatoire")); return false; }
+    if (s === 2 && form.account.enabled) {
+      if (!form.account.username.trim()) { setErr(t("Le nom d'utilisateur est obligatoire")); return false; }
+      if (!form.account.password) { setErr(t("Le mot de passe est obligatoire")); return false; }
+    }
+    return true;
+  };
+
+  const next = () => {
+    if (!validate(step)) return;
+    setStep((s) => Math.min(LAST_STEP, s + 1));
+  };
+
   const save = () => {
-    if (!form.fullName.trim()) return;
+    // Reached only from the last step, and every earlier step is re-checked here
+    for (let s = 0; s <= LAST_STEP; s++) {
+      if (!validate(s)) { setStep(s); return; }
+    }
+    const pay = {
+      ...form.pay,
+      amount: Number(form.pay.amount) || 0,
+      percent: Number(form.pay.percent) || 0,
+    };
     update((d) => {
       if (editing) {
         const i = d.workers.findIndex((w) => w.id === editing.id);
-        d.workers[i] = { ...editing, ...form, pay: { ...form.pay, amount: Number(form.pay.amount) || 0 } };
+        if (i >= 0) d.workers[i] = { ...d.workers[i], ...form, pay };
       } else {
         d.workers.push({
-          id: uid(), ...form,
-          pay: { ...form.pay, amount: Number(form.pay.amount) || 0, percent: Number(form.pay.percent) || 0 },
+          id: uid(), ...form, pay,
           permissions: {}, advances: [], absences: [], payments: [], settledRepairIds: [],
         });
       }
@@ -65,15 +93,14 @@ function WorkerWizard({ editing, onClose }) {
       footer={
         <>
           {step > 0 && <Btn variant="ghost" onClick={() => setStep(step - 1)}>{t("Précédent")}</Btn>}
-          {step < 2
-            ? <Btn onClick={() => setStep(step + 1)}>{t("Suivant")}</Btn>
+          {step < LAST_STEP
+            ? <Btn onClick={next}>{t("Suivant")}</Btn>
             : <Btn variant="accent" onClick={save}>{t("Enregistrer")}</Btn>}
         </>
       }>
       <Steps labels={steps} current={step} />
-      <AnimatePresence mode="wait">
-        <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.2 }}>
+      <StepPane step={step}>
+        <div>
           {step === 0 && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label={t("Nom complet")} required>
@@ -165,8 +192,9 @@ function WorkerWizard({ editing, onClose }) {
               </AnimatePresence>
             </div>
           )}
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      </StepPane>
+      {err && <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600" role="alert">{err}</p>}
     </Modal>
   );
 }

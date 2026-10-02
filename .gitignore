@@ -2,3 +2,13 @@ node_modules/
 dist/
 *.local
 .DS_Store
+
+# Base de données locale (données réelles du garage — jamais versionnées)
+data/
+*.db
+*.db-wal
+*.db-shm
+preview-print/
+
+# Raccourci Windows : chemins absolus, propre a chaque machine
+*.lnk

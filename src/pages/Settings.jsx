@@ -62,6 +62,20 @@ export default function Settings() {
     reader.readAsDataURL(file);
   };
 
+  // Destructive and irreversible — make the user confirm, and offer the backup first.
+  const wipe = async () => {
+    const ok = window.confirm(
+      t("Toutes les données seront définitivement effacées. Pensez à faire une sauvegarde. Continuer ?")
+    );
+    if (!ok) return;
+    try {
+      await resetData();
+    } catch {
+      setMsg(t("La réinitialisation a échoué"));
+      setTimeout(() => setMsg(""), 3000);
+    }
+  };
+
   const backup = () => {
     const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
@@ -78,7 +92,7 @@ export default function Settings() {
     reader.onload = () => {
       try {
         const data = JSON.parse(reader.result);
-        if (!data.clients || !data.repairs) throw new Error("bad");
+        if (!Array.isArray(data.clients) || !Array.isArray(data.repairs)) throw new Error("bad");
         restoreData(data);
         setMsg(t("Sauvegarde restaurée avec succès"));
       } catch {
@@ -190,9 +204,12 @@ export default function Settings() {
                   {t("Restaurer une sauvegarde")}
                 </Btn>
                 <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={restore} />
-                <Btn variant="danger" icon={RotateCcw} className="w-full" onClick={resetData}>
-                  {t("Réinitialiser les données de démo")}
+                <Btn variant="danger" icon={RotateCcw} className="w-full" onClick={wipe}>
+                  {t("Vider la base de données")}
                 </Btn>
+                <p className="text-center text-xs text-slate-400">
+                  {t("Efface définitivement toutes les données et vous déconnecte.")}
+                </p>
               </div>
               <AnimatePresence>
                 {msg && (

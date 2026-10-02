@@ -2,9 +2,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import { Wrench, User, Mail, Lock, AtSign, Sparkles, Languages, Eye, EyeOff } from "lucide-react";
+import { Wrench, User, Mail, Lock, AtSign, Languages, Eye, EyeOff, Zap } from "lucide-react";
 import { useApp } from "../context";
-import { Btn, Field, Input } from "../components/ui";
+import { Btn, Field, Input, Confirm } from "../components/ui";
 
 // Emotion: animated gradient blobs behind the card
 const float = keyframes`
@@ -23,8 +23,10 @@ const Blob = styled.div`
 `;
 
 export default function Login() {
-  const { login, register, t, lang, setLang } = useApp();
-  const [mode, setMode] = useState("login"); // login | register
+  const { login, loginDemo, register, t, lang, setLang, needsSetup } = useApp();
+  const [confirmDemo, setConfirmDemo] = useState(false);
+  // A fresh database has no account yet — go straight to creating the first admin.
+  const [mode, setMode] = useState(needsSetup ? "register" : "login");
   const [error, setError] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [form, setForm] = useState({ identifier: "", name: "", username: "", email: "", password: "" });
@@ -39,6 +41,13 @@ export default function Login() {
       const res = register(form);
       if (res.error) setError(t(res.error));
     }
+  };
+
+  const demo = (merge = false) => {
+    setError("");
+    const res = loginDemo({ merge });
+    if (res.needsConfirm) setConfirmDemo(true);
+    else if (res.error) setError(t(res.error));
   };
 
   return (
@@ -84,19 +93,28 @@ export default function Login() {
           </div>
 
           <div className="px-8 py-7">
-            {/* Tabs */}
-            <div className="mb-6 grid grid-cols-2 gap-1 rounded-xl bg-primary-50 p-1">
-              {[["login", t("Connexion")], ["register", t("Créer un compte admin")]].map(([m, label]) => (
-                <button key={m} onClick={() => { setMode(m); setError(""); }}
-                  className={`relative rounded-lg px-2 py-2 text-[13px] font-semibold cursor-pointer transition-colors ${mode === m ? "text-white" : "text-slate-500"}`}>
-                  {mode === m && (
-                    <motion.span layoutId="login-tab" className="absolute inset-0 rounded-lg grad-primary"
-                      transition={{ type: "spring", stiffness: 400, damping: 32 }} />
-                  )}
-                  <span className="relative z-10">{label}</span>
-                </button>
-              ))}
-            </div>
+            {needsSetup ? (
+              <div className="mb-6 rounded-xl bg-primary-50 px-4 py-3 text-center">
+                <p className="text-[13px] font-semibold text-primary-800">{t("Première utilisation")}</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  {t("Créez le compte administrateur de votre garage pour commencer.")}
+                </p>
+              </div>
+            ) : (
+              /* Tabs */
+              <div className="mb-6 grid grid-cols-2 gap-1 rounded-xl bg-primary-50 p-1">
+                {[["login", t("Connexion")], ["register", t("Créer un compte admin")]].map(([m, label]) => (
+                  <button key={m} onClick={() => { setMode(m); setError(""); }}
+                    className={`relative rounded-lg px-2 py-2 text-[13px] font-semibold cursor-pointer transition-colors ${mode === m ? "text-white" : "text-slate-500"}`}>
+                    {mode === m && (
+                      <motion.span layoutId="login-tab" className="absolute inset-0 rounded-lg grad-primary"
+                        transition={{ type: "spring", stiffness: 400, damping: 32 }} />
+                    )}
+                    <span className="relative z-10">{label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
 
             <form onSubmit={submit}>
               <AnimatePresence mode="wait">
@@ -162,16 +180,15 @@ export default function Login() {
               </Btn>
             </form>
 
-            <div className="my-4 flex items-center gap-3">
-              <div className="h-px flex-1 bg-primary-100" />
-              <span className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Demo</span>
-              <div className="h-px flex-1 bg-primary-100" />
+            <div className="my-5 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-wider text-slate-300">
+              <span className="h-px flex-1 bg-primary-100" /> {t("ou")} <span className="h-px flex-1 bg-primary-100" />
             </div>
-
-            <Btn variant="accent" icon={Sparkles} className="w-full"
-              onClick={() => login("demo", "demo123")}>
-              {t("Compte démo (Admin)")}
+            <Btn variant="accent" icon={Zap} className="w-full" onClick={() => demo()}>
+              {t("Accès rapide : compte démo admin")}
             </Btn>
+            <p className="mt-2 text-center text-[11px] text-slate-400">
+              {t("Explorez l'application avec des données de test déjà remplies.")}
+            </p>
           </div>
         </div>
 
@@ -180,6 +197,11 @@ export default function Login() {
           {t("Gérez votre garage simplement : rendez-vous, réparations, stock, achats et plus.")}
         </motion.p>
       </motion.div>
+
+      <Confirm open={confirmDemo} onClose={() => setConfirmDemo(false)} onConfirm={() => demo(true)}
+        title={t("Ajouter les données de démo ?")}
+        message={t("Cette base contient déjà des données. Les données de démo (clients, réparations, stock, ventes…) et le compte démo seront ajoutés à côté de vos données, sans les modifier.")}
+        confirmLabel={t("Oui, ajouter et se connecter")} />
     </div>
   );
 }
