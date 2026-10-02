@@ -1,4 +1,4 @@
-# AutoGarage Pro — Gestion de garage automobile
+# Altech Garage — Gestion de garage automobile
 
 Application web complète de gestion de garage (réparations, rendez-vous, stock, codes-barres, achats, clients, fournisseurs, employés, dépenses, caisse, rapports), en **français** avec bascule **arabe (RTL)**, mode clair avec dégradés et animations Framer Motion.
 
@@ -6,7 +6,7 @@ Les données sont enregistrées dans une **base SQLite locale** (`data/garage.db
 
 ## Démarrage rapide (Windows)
 
-Double-cliquez sur le raccourci **AutoGarage Pro** du Bureau, ou sur `AutoGarage.bat`.
+Double-cliquez sur le raccourci **Altech Garage** du Bureau, ou sur `AutoGarage.bat`.
 
 Le lanceur installe les dépendances si besoin, compile l'application, démarre le serveur puis ouvre le navigateur sur <http://localhost:5180>. Si l'application tourne déjà, il ouvre simplement le navigateur.
 

@@ -1,4 +1,4 @@
-# Cree le raccourci "AutoGarage Pro" (dossier de l'application + Bureau + menu Demarrer).
+# Cree le raccourci "Altech Garage" (dossier de l'application + Bureau + menu Demarrer).
 #
 #   powershell -ExecutionPolicy Bypass -File tools\create-shortcut.ps1
 #
@@ -31,26 +31,26 @@ function New-AppShortcut([string]$path) {
     $sc.TargetPath = $target
     $sc.WorkingDirectory = $root
     $sc.IconLocation = "$icon,0"
-    $sc.Description = 'AutoGarage Pro - Gestion de garage automobile'
+    $sc.Description = 'Altech Garage - Gestion de garage automobile'
     $sc.WindowStyle = 7          # demarre reduit : la console ne gene pas
     $sc.Save()
     Write-Host "  Raccourci cree : $path"
 }
 
 # Raccourci dans le dossier de l'application lui-meme.
-New-AppShortcut (Join-Path $root 'AutoGarage Pro.lnk')
+New-AppShortcut (Join-Path $root 'Altech Garage.lnk')
 
 if (-not $NoDesktop) {
     $desktop = [Environment]::GetFolderPath('Desktop')
-    New-AppShortcut (Join-Path $desktop 'AutoGarage Pro.lnk')
+    New-AppShortcut (Join-Path $desktop 'Altech Garage.lnk')
 }
 
 if (-not $NoStartMenu) {
     $startMenu = Join-Path ([Environment]::GetFolderPath('StartMenu')) 'Programs'
     if (Test-Path $startMenu) {
-        New-AppShortcut (Join-Path $startMenu 'AutoGarage Pro.lnk')
+        New-AppShortcut (Join-Path $startMenu 'Altech Garage.lnk')
     }
 }
 
 Write-Host ''
-Write-Host 'Termine. Double-cliquez sur "AutoGarage Pro" pour lancer l''application.'
+Write-Host 'Termine. Double-cliquez sur "Altech Garage" pour lancer l''application.'

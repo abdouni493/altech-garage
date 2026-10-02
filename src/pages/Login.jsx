@@ -88,7 +88,7 @@ export default function Login() {
               className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-white shadow-lift backdrop-blur">
               <Wrench size={30} />
             </motion.div>
-            <h1 className="text-xl font-bold text-white">{t("AutoGarage Pro")}</h1>
+            <h1 className="text-xl font-bold text-white">{t("Altech Garage")}</h1>
             <p className="mt-1 text-xs text-white/60">{t("Gestion de garage automobile")}</p>
           </div>
 

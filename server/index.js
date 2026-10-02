@@ -1,4 +1,4 @@
-// ===== AutoGarage Pro — local application server =====
+// ===== Altech Garage — local application server =====
 //
 // Serves the built front-end and the database API from a single origin, so the
 // whole app runs from one URL with no external service to install.
@@ -166,7 +166,7 @@ server.on("error", (err) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`\n  AutoGarage Pro`);
+  console.log(`\n  Altech Garage`);
   console.log(`  Application : http://localhost:${PORT}`);
   console.log(`  Base de données : ${DB_FILE}`);
   console.log(`\n  Ctrl+C pour arrêter.\n`);

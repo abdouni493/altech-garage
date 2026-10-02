@@ -10,7 +10,7 @@ import { emptyDB, dayOffset, todayISO } from "./store";
 import { normalizeEan13 } from "./barcode";
 
 export const DEMO_USER = {
-  id: "demo-admin", name: "Admin Démo", username: "demo", email: "demo@autogarage.dz",
+  id: "demo-admin", name: "Admin Démo", username: "demo", email: "demo@altech-garage.dz",
   password: "demo123", role: "admin",
 };
 
@@ -114,7 +114,7 @@ const WORKERS = [
     id: "demo-w-mourad", fullName: "Mourad Saidi", birthday: "1990-04-12", idCard: "109900123", phone: "0555 66 77 88",
     roleId: "demo-role-meca", startDate: dayOffset(-400),
     pay: { enabled: true, mode: "month", amount: 45000, percent: 10 },
-    account: { enabled: true, email: "mourad@autogarage.dz", username: "mourad", password: "demo123" },
+    account: { enabled: true, email: "mourad@altech-garage.dz", username: "mourad", password: "demo123" },
     permissions: allow([
       ["dashboard", ["view"]], ["repairs", ["view", "create", "edit", "finalize"]],
       ["services", ["view"]], ["stock", ["view"]], ["pos", ["view", "create"]], ["clients", ["view", "create", "history"]],
@@ -150,8 +150,8 @@ export function buildDemoDB() {
   db.users = [{ ...DEMO_USER }];
   db.settings = {
     ...db.settings,
-    name: "AutoGarage Démo", description: "Mécanique · Vidange · Pneumatique",
-    email: "contact@autogarage.dz", phone: "0551 64 80 17", address: "Route poids lourd, Aïn M'lila",
+    name: "Altech Garage Démo", description: "Mécanique · Vidange · Pneumatique",
+    email: "contact@altech-garage.dz", phone: "0551 64 80 17", address: "Route poids lourd, Aïn M'lila",
     nif: "000304011223344", nis: "001304055667788", rc: "04/00-0112233A20", article: "04011223344",
   };
   db.services = SERVICES.map((s) => ({ ...s }));

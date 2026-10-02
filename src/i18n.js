@@ -3,7 +3,7 @@
 
 export const AR = {
   // ===== Global / brand =====
-  "AutoGarage Pro": "أوتو جراج برو",
+  "Altech Garage": "ألتك جراج",
   "Gestion de garage automobile": "إدارة ورشة تصليح السيارات",
   "Se connecter": "تسجيل الدخول",
   "Connexion": "تسجيل الدخول",

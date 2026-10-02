@@ -79,7 +79,7 @@ function SidebarContent({ page, setPage, onNavigate }) {
             : <Wrench size={22} />}
         </motion.div>
         <div>
-          <p className="text-[15px] font-bold leading-tight text-white">{db.settings.name || t("AutoGarage Pro")}</p>
+          <p className="text-[15px] font-bold leading-tight text-white">{db.settings.name || t("Altech Garage")}</p>
           <p className="text-[11px] text-white/50">{t("Gestion de garage automobile")}</p>
         </div>
       </div>

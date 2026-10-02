@@ -1,6 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
-title AutoGarage Pro
+title Altech Garage
 cd /d "%~dp0"
 
 set "PORT=5180"
@@ -8,7 +8,7 @@ set "URL=http://localhost:%PORT%"
 
 echo.
 echo   ===================================
-echo     AutoGarage Pro
+echo     Altech Garage
 echo   ===================================
 echo.
 
@@ -40,7 +40,7 @@ echo.
 
 REM ---- Demarrage du serveur ----------------------------------------------
 echo   Demarrage du serveur local...
-start "AutoGarage Pro - Serveur" /min cmd /c "node server\index.js || pause"
+start "Altech Garage - Serveur" /min cmd /c "node server\index.js || pause"
 
 REM ---- Attente que le serveur reponde ------------------------------------
 set /a tries=0
@@ -74,7 +74,7 @@ exit /b 1
 :timeout
 echo.
 echo   [X] Le serveur n'a pas repondu apres 30 secondes.
-echo       Consultez la fenetre "AutoGarage Pro - Serveur" pour le detail.
+echo       Consultez la fenetre "Altech Garage - Serveur" pour le detail.
 echo.
 pause
 exit /b 1
